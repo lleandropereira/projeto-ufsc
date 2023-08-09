@@ -1,0 +1,4 @@
+teclado
+mesa
+garrafa
+cadeira
