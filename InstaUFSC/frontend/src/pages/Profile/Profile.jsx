@@ -1,11 +1,11 @@
 import "./Profile.css";
 
-import {uploads} from "../../utils/config";
+import { uploads } from "../../utils/config";
 
 import Message from "../../components/Message";
 import { NavLink } from "react-router-dom";
 import {
-  BsFillEyeFill, //íccone de visualização
+  BsFillEyeFill, //ícone de visualização
   BsPencilFill, //ícone de edição
   BsXLg, //ícone de remoção
 } from "react-icons/bs";
@@ -13,10 +13,10 @@ import {
 import { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
-import {useForm} from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 import { getUserDetails } from "../../slices/userSlice";
-import { 
+import {
   publishPhoto,
   resetMessage,
   getUserPhotos,
@@ -25,18 +25,18 @@ import {
 } from "../../slices/photoSlice";
 
 const Profile = () => {
-  const {id} = useParams();
+  const { id } = useParams();
 
   const dispatch = useDispatch();
 
-  const {user, loading} = useSelector((state) => state.user);
+  const { user, loading } = useSelector((state) => state.user);
 
-  //aqui fazemos uma renomeação para userAuth da variável do Reducer de autenticação
-  //para evitar problemas com o user do Reducer de usuáriro
-  const {user: userAuth} = useSelector((state) => state.auth);
+  //aqui fazemos uma renomeação para userAuth da variável do Reducer de Autenticação
+  //para evitar problemas com o user do Reducer de Usuário
+  const { user: userAuth } = useSelector((state) => state.auth);
 
-  //aqui fazemos novas renomeações de variáveis do reducer de Foto
-  //para eviar problemas com aquelas do Reducer de usuário
+  //aqui fazemos novas renomeações de variáveis do Reducer de Foto
+  //para evitar problemas com aquelas do Reducer de Usuário
   const {
     photos,
     loading: loadingPhoto,
@@ -44,7 +44,7 @@ const Profile = () => {
     error: errorPhoto,
   } = useSelector((state) => state.photo);
 
-  const {register, handleSubmit, reset, getValues} = useForm();
+  const { register, handleSubmit, reset, getValues } = useForm();
 
   //referência para formulário de criação e edição de fotos
   const newPhotoForm = useRef();
@@ -60,13 +60,14 @@ const Profile = () => {
   const handleEditPhoto = (e) => {
     setEditedPhoto({
       ...editedPhoto,
-      [e.target.name] : e.target.value,
+      [e.target.name]: e.target.value,
     });
   };
 
-  //carregamento de usuário
+  ///carregamento de usuário
   useEffect(() => {
     dispatch(getUserDetails(id));
+    dispatch(getUserPhotos(id));
   }, [dispatch, id]); //será acionado com o dispatch ou com a chegada de um novo id
 
   const resetComponentMessage = () => {
@@ -80,7 +81,7 @@ const Profile = () => {
     let newImage = "";
     const img = getValues("image");
 
-    if(img) {
+    if (img) {
       newImage = img[0];
     }
 
@@ -89,14 +90,16 @@ const Profile = () => {
       image: newImage,
     };
 
-    //vamos construir um objeto fomr-data que será passado pela requisição
+    //vamos construir um objeto form-data que será passado pela requisição
     //isso é necessário porque iremos passar um arquivo junto
     const formData = new FormData();
 
-    const photoFormData = Object.keys(photoData).forEach((key) => formData.append(key, photoData[key]));
+    const photoFormData = Object.keys(photoData).forEach((key) =>
+      formData.append(key, photoData[key])
+    );
 
     formData.append("photo", photoFormData);
-    
+
     await dispatch(publishPhoto(formData));
 
     resetComponentMessage();
@@ -104,6 +107,7 @@ const Profile = () => {
 
   const handleDelete = (id) => {
     dispatch(deletePhoto(id));
+
     resetComponentMessage();
   };
 
@@ -125,8 +129,8 @@ const Profile = () => {
     editPhotoForm.current.classList.toggle("hide"); //alterna o estado do formulário de edição
   };
 
-  const handleEdit = (photo) => {
-    if(editPhotoForm.current.classList.contains("hide")) {
+  const handleClickEdit = (photo) => {
+    if (editPhotoForm.current.classList.contains("hide")) {
       //se a edição está escondida, precisamos exibi-la
       hideOrShowForms();
     }
@@ -138,16 +142,13 @@ const Profile = () => {
     });
   };
 
-  const handleClickEdit = (photo) => {    
-  };
-
   const handleCancelEdit = (e) => {
     e.preventDefault();
 
     hideOrShowForms();
   };
 
-  if(loading) {
+  if (loading) {
     return <p>Carregando...</p>;
   }
 
@@ -165,18 +166,24 @@ const Profile = () => {
       {id === userAuth._id && (
         <>
           <div className="new-photo" ref={newPhotoForm}>
-            <h3>Compartilhar algum momento seu:</h3>
+            <h3>Compartilhe algum momento seu:</h3>
             <form onSubmit={handleSubmit(onSubmit)}>
               <label>
                 <span>Título para a foto:</span>
-                <input {...register("title")} type="text" placeholder="Insira um título" />
+                <input
+                  {...register("title")}
+                  type="text"
+                  placeholder="Insira um título"
+                />
               </label>
               <label>
                 <span>Imagem:</span>
                 <input {...register("image")} type="file" />
               </label>
               {!loadingPhoto && <input type="submit" value="Postar" />}
-              {loadingPhoto && (<input type="submit" value="Aguarde..." disabled />)}
+              {loadingPhoto && (
+                <input type="submit" value="Aguarde..." disabled />
+              )}
             </form>
           </div>
           <div className="edit-photo hide" ref={editPhotoForm}>
@@ -188,16 +195,16 @@ const Profile = () => {
               />
             )}
             <form onSubmit={handleUpdate}>
-              <input 
+              <input
                 type="text"
                 name="editedTitle"
                 onChange={handleEditPhoto}
                 value={editedPhoto.editedTitle}
-               />
-               <input type="submit" value="Atualizar" />
-               <button className="cancel-btn" onClick={handleCancelEdit}>
+              />
+              <input type="submit" value="Atualizar" />
+              <button className="cancel-btn" onClick={handleCancelEdit}>
                 Cancelar edição
-               </button>
+              </button>
             </form>
           </div>
           {errorPhoto && <Message msg={errorPhoto} type="error" />}
@@ -205,7 +212,7 @@ const Profile = () => {
         </>
       )}
       <div className="user-photos">
-        <h2>Fotos publicadas</h2>
+        <h2>Fotos publicadas:</h2>
         <div className="photos-container">
           {photos &&
             photos.map((photo) => (
@@ -216,15 +223,15 @@ const Profile = () => {
                     alt={photo.title}
                   />
                 )}
-                {/*se a foto é nossa, podemos editá-la ou removê-la */}
-                {/*caso contrário, só podemos visualizá-la */}
+                {/* se a foto é nossa, podemos editá-la ou removê-la */}
+                {/* caso contrário, só podemos visualizá-la */}
                 {id === userAuth._id ? (
                   <div className="actions">
                     <NavLink to={`/photos/${photo._id}`}>
                       <BsFillEyeFill />
                     </NavLink>
                     <BsPencilFill onClick={() => handleClickEdit(photo)} />
-                    <BsXLg onClick={() => handleDelete(photo._id)}/>
+                    <BsXLg onClick={() => handleDelete(photo._id)} />
                   </div>
                 ) : (
                   <NavLink className="btn" to={`photos/${photo._id}`}>
@@ -233,8 +240,8 @@ const Profile = () => {
                 )}
               </div>
             ))}
-            {/*se não houver fotos, deixamos isso claro para o usuário */}
-            {photos.length === 0 && <p>Ainda não há fotos publicadas</p>}
+          {/* se não houver fotos, deixamos isso claro para o usuário */}
+          {photos.length === 0 && <p>Ainda não há fotos publicadas</p>}
         </div>
       </div>
     </div>

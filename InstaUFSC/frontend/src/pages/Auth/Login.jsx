@@ -21,9 +21,7 @@ const Login = () => {
 
   const handleChange = (e) => {
     setUser({
-      //spread operator, matém a estrutura inicial e adiciona nova informação
       ...user,
-      //tanto o valor quanto o nome do campo são dinâmicos
       [e.target.name]: e.target.value,
     });
   };
@@ -37,7 +35,7 @@ const Login = () => {
   };
 
   //criamos um useEffect para chamar a função reset sempre que outra função for executada
-  //assim, podemos reinicializar os estados do componente
+  //assim, podemos reinicilizar os estados do componente
   useEffect(() => {
     dispatch(reset());
   }, [dispatch]); //o useEffect irá monitorar cada dispatch executado
@@ -47,7 +45,7 @@ const Login = () => {
       <h2>InstaUFSC</h2>
       <p className="subtitle">Faça o login para ver as novidades.</p>
       <form onSubmit={handleSubmit}>
-        <input 
+        <input
           type="text"
           placeholder="E-mail"
           name="email"
@@ -61,9 +59,9 @@ const Login = () => {
           onChange={handleChange}
           value={user.password}
         />
-        {!loading && <input type="submit" value="Entrar"/>}
-        {loading && <input type="submit" value="Aguarde" disabled />}
-        {error && <Message msg={error} type="error"/>}
+        {!loading && <input type="submit" value="Entrar" />}
+        {loading && <input type="submit" value="Aguarde..." disabled />}
+        {error && <Message msg={error} type="error" />}
         <p>
           Não possui cadastro? <NavLink to="/register">Clique aqui</NavLink>
         </p>

@@ -1,16 +1,20 @@
-import "./Home.css";
+import "./Search.css";
+
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useResetMessageComponent } from "../../hooks/useResetMessageComponent";
+import { useQuery } from "../../hooks/useQuery";
 
 import LikeContainer from "../../components/LikeContainer";
 import PhotoItem from "../../components/PhotoItem";
 import { NavLink } from "react-router-dom";
 
-import { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { useResetMessageComponent } from "../../hooks/useResetMessageComponent";
+import { searchPhotos, like } from "../../slices/photoSlice";
 
-import { getPhotos, like } from "../../slices/photoSlice";
+const Search = () => {
+  const query = useQuery();
+  const search = query.get("q"); //retorna o elemento q da URL
 
-const Home = () => {
   const dispatch = useDispatch();
 
   const resetMessage = useResetMessageComponent(dispatch);
@@ -18,10 +22,10 @@ const Home = () => {
   const { user } = useSelector((state) => state.auth);
   const { photos, loading } = useSelector((state) => state.photo);
 
-  //carregamento de todas as fotos
+  //carregamento das fotos a partir da string de busca definida
   useEffect(() => {
-    dispatch(getPhotos());
-  }, [dispatch]);
+    dispatch(searchPhotos(search));
+  }, [dispatch, search]); //monitora o dispatch e a variável de search
 
   //atribuição de likes
   const handleLike = (photo) => {
@@ -35,7 +39,8 @@ const Home = () => {
   }
 
   return (
-    <div id="home">
+    <div id="search">
+      <h2>Você buscou por: {search}</h2>
       {photos &&
         photos.map((photo) => (
           <div key={photo._id}>
@@ -48,12 +53,11 @@ const Home = () => {
         ))}
       {photos && photos.length === 0 && (
         <h2 className="no-photos">
-          Ainda não há fotos publicadas,{" "}
-          <NavLink to={`/users/${user._id}`}>clique aqui</NavLink>.
+          Não foram encontrados resultados para a sua busca.
         </h2>
       )}
     </div>
   );
 };
 
-export default Home;
+export default Search;

@@ -1,48 +1,54 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 
-//controller
+// controller
 const {
-    insertPhoto, 
-    deletePhoto,
-    getAllPhotos,
-    getUserPhotos,
-    getPhotoById,
-    updatePhoto,
-    likePhoto,
-    commentPhoto,
-    searchPhotos,
-} = require('../controllers/PhotoController');
+  insertPhoto,
+  deletePhoto,
+  getAllPhotos,
+  getUserPhotos,
+  getPhotoById,
+  updatePhoto,
+  likePhoto,
+  commentPhoto,
+  searchPhotos,
+} = require("../controllers/PhotoController");
 
-//middleware
+// middleware
 const {
-    photoInsertValidation,
-    photoUpdateValidation,
-    photoCommentValidation,
-} = require('../middlewares/photoValidation');
-const authGuard = require('../middlewares/authGuard');
-const validate = require('../middlewares/handleValidations');
-const {imageUpload} = require('../middlewares/imageUpload');
+  photoInsertValidation,
+  photoUpdateValidation,
+  photoCommentValidation,
+} = require("../middlewares/photoValidation");
+const authGuard = require("../middlewares/authGuard");
+const validate = require("../middlewares/handleValidations");
+const { imageUpload } = require("../middlewares/imageUpload");
 
-//rotas
+// rotas
 router.post(
-    '/',
-    authGuard,
-    imageUpload.single('image'),
-    photoInsertValidation(),
-    validate,
-    insertPhoto
+  "/",
+  authGuard,
+  imageUpload.single("image"),
+  photoInsertValidation(),
+  validate,
+  insertPhoto
 );
+//rota com id dinâmico, o usuário precisa estar autenticado
+router.delete("/:id", authGuard, deletePhoto);
+router.get("/", authGuard, getAllPhotos);
+router.get("/user/:id", authGuard, getUserPhotos);
+//precisa ser criada antes da rota dinâmica com GET, para não haver confusão do express
+router.get("/search", authGuard, searchPhotos);
 
-//rota com id dinâmico e o usuário precisa estar autenticado
-router.delete('/:id', authGuard, deletePhoto);
-router.get('/', authGuard, getAllPhotos);
-router.get('/user/:id', authGuard, getUserPhotos);
-//precisa ser  criada antes da rota dinâmica com GET, para não haver confusão do Express
-router.get('/search', authGuard, searchPhotos);
-router.get('/:id', authGuard, getPhotoById);
-router.patch('/:id', authGuard, photoUpdateValidation(), validate, updatePhoto);
-router.patch('/like/:id', authGuard, likePhoto);
-router.patch('/comments/:id', authGuard, photoCommentValidation(), validate, commentPhoto);
+router.get("/:id", authGuard, getPhotoById);
+router.patch("/:id", authGuard, photoUpdateValidation(), validate, updatePhoto);
+router.patch("/like/:id", authGuard, likePhoto);
+router.patch(
+  "/comment/:id",
+  authGuard,
+  photoCommentValidation(),
+  validate,
+  commentPhoto
+);
 
 module.exports = router;

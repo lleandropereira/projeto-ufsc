@@ -7,10 +7,10 @@ import photoReducer from "./slices/photoSlice";
 import logger from "redux-logger";
 
 export const store = configureStore({
-    reducer: {
-        auth: authReducer,
-        user: userReducer,
-        photo: photoReducer,
-    },
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
+  reducer: {
+    auth: authReducer,
+    user: userReducer,
+    photo: photoReducer,
+  },
+  // middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
 });
