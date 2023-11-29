@@ -16,6 +16,13 @@ h1 {
   text-align: center;
 }
 
-h2 {
+p {
   text-align: center;
+}
+
+.buttoncss {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
 }
